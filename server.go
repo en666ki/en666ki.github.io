@@ -8,13 +8,20 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/microsoft/vscode-remote-try-go/hello"
 )
 
 func handle(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, hello.Hello())
+	params := hello.Params{
+		Name: r.URL.Query().Get("name"),
+		Ip:   r.RemoteAddr,
+	}
+	log.Print(params.Name, params.Ip)
+	user := hello.Register(params)
+	io.WriteString(w, hello.Hello(user))
 }
 
 func main() {
